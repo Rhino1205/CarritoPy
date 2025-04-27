@@ -1,3 +1,6 @@
+import datetime
+
+
 def tienda():
     print("      BIENVENIDO(A) A LA TIENDA VIRTUAL")
     catalogo = {
@@ -57,32 +60,54 @@ def ver_catalogo(registro):
     
 
 def agregar_producto(registro,shopping_cart):
-  
-  codigo = input("Ingrese codigo de producto: ").upper()
-  while codigo not in registro:
-    print("El codigo que ingreso no es correcto, intentelo nuevamente")
-    codigo = input("Ingrese codigo de producto: ").upper()
-
-  while codigo in shopping_cart:
-    print("""
-          El producto ya se encuentra en el carrito
-          Si desea modificar la cantidad, primero elimine el producto
-          y luego agreguelo nuevamente:)
+   print("""
+    Ingrese el numero de operaciones que desea realizar.
+    Si durante el proceso cambia de opinion sobre la cantidad
+    de operaciones ingrese la letra m para agregar hasta la 
+    ultima operacion añadida y luego salir al menu
     """)
-    return
-    
+   while True:
+    try:
+        numero_operaciones = int(input("Numero de operaciones: "))
+        if numero_operaciones<0:
+           print("Ingrese un numero mayor a cero")
+        else:
+           break
 
-  cantidad=int(input("Ingresa cantidad: "))
-  while cantidad <=0:
-    print("Ingreso una cantidad invalida, intentelo nuevamente")
+    except ValueError as e:
+      print(f"Ingrese un numero valido, error: {e}")
+      
+
+   for i in range(numero_operaciones):
+    codigo = input(f"Ingrese el codigo de producto {i + 1}: ").upper()
+    if codigo == "M":
+      return
+    
+    while codigo not in registro:
+      print("El codigo que ingreso no es correcto, intentelo nuevamente")
+      codigo = input(f"Ingrese el codigo de producto {i + 1}: ").upper()
+
+    while codigo in shopping_cart:
+      print("""
+            El producto ya se encuentra en el carrito
+            Si desea modificar la cantidad, primero salga
+            al menu, escoja la opcion eliminar producto
+            y luego agreguelo nuevamente:)
+      """)
+      codigo = input(f"Ingrese el codigo de producto {i + 1}: ").upper()
+
     cantidad=int(input("Ingresa cantidad: "))
+    
+    while cantidad <=0:
+      print("Ingreso una cantidad invalida, intentelo nuevamente")
+      cantidad=int(input("Ingresa cantidad: "))
   
-  shopping_cart[codigo]={"nombre":registro[codigo]["nombre"] , "precio":registro[codigo]["precio"] , "cantidad":cantidad}
-  print("Producto agregado al carrito")
-  
+    shopping_cart[codigo]={"nombre":registro[codigo]["nombre"] , "precio":registro[codigo]["precio"] , "cantidad":cantidad}
+    print("Producto agregado al carrito") 
 
 def eliminar_producto(shopping_cart):
     codigo_a_eliminar = input("Ingrese el codigo del producto que desea eliminar: ").upper()
+    
     while codigo_a_eliminar not in shopping_cart:
         print("""
               si se trato de un error ingrese la tecla m para volver al menu,
@@ -123,6 +148,30 @@ def finalizar_compra(shopping_cart):
         precio_total += total_por_producto
     
     print(f"Total a pagar {precio_total}")
+    guardar_historial_compras_txt(shopping_cart, precio_total)
+
+def guardar_historial_compras_txt(shopping_cart, precio_total):
+    
+    fecha_actual = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    
+    nombre_archivo = "historial_compras.txt"
+
+    with open(nombre_archivo, mode='a') as archivo:
+        archivo.write(f"Fecha: {fecha_actual}\n")
+        archivo.write(f"Productos comprados:\n")
+        
+        for producto in shopping_cart:
+            nombre = shopping_cart[producto]["nombre"]
+            cantidad = shopping_cart[producto]["cantidad"]
+            precio = shopping_cart[producto]["precio"]
+            total_producto = round(precio * cantidad, 2)
+            archivo.write(f"  - {nombre} (x{cantidad}) -> {total_producto}\n")
+        
+        archivo.write(f"Total de la compra: {precio_total}\n")
+        archivo.write("-" * 40 + "\n")
+
+    print("Historial de compra guardado exitosamente.")
+
 
 
 print(tienda())

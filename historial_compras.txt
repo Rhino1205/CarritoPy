@@ -1,0 +1,6 @@
+Fecha: 2025-04-26 23:54:31
+Productos comprados:
+  - Camiseta Deportiva (x10) -> 199.9
+  - Auriculares Bluetooth (x20) -> 999.8
+Total de la compra: 1199.7
+----------------------------------------
