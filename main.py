@@ -38,16 +38,17 @@ def menu(registro,shopping_cart):
         elif option=="5":
             mostrar_carrito(shopping_cart)
         elif option=="6":
-            finalizar_compra()
+            finalizar_compra(shopping_cart)
 
         elif option=="7":
-            print("saliendo...")
+            print("Hasta pronto")
             break
         else:
             print("Ingreso una opcion incorrecta, intentelo de nuevo.")
 
 def ver_catalogo(registro):
     max_nombre = max(len(registro[producto]['nombre']) for producto in registro)
+    print("Catalogo de productos:")
     for producto in registro:
         nombre = registro[producto]['nombre']
         precio = registro[producto]['precio']
@@ -78,21 +79,50 @@ def agregar_producto(registro,shopping_cart):
   
   shopping_cart[codigo]={"nombre":registro[codigo]["nombre"] , "precio":registro[codigo]["precio"] , "cantidad":cantidad}
   print("Producto agregado al carrito")
-  print(shopping_cart)
+  
 
 def eliminar_producto(shopping_cart):
     codigo_a_eliminar = input("Ingrese el codigo del producto que desea eliminar: ").upper()
+    while codigo_a_eliminar not in shopping_cart:
+        print("""
+              si se trato de un error ingrese la tecla m para volver al menu,
+              si no es un error ingrese un codigo valido del producto que desea eliminar
+               """)
+        codigo_a_eliminar = input("Ingrese el codigo del producto que desea eliminar: ").upper()
+        if codigo_a_eliminar == "M":
+            return
     del(shopping_cart[codigo_a_eliminar])
     
 
 def vaciar_carrito(shopping_cart):
     shopping_cart.clear()
 
-    print(shopping_cart)
-
 def mostrar_carrito(shopping_cart):
-    pass
+    print("Tu carrito: ")
 
-def finalizar_compra():
-    pass
+    max_nombre = max(len(shopping_cart[producto]['nombre']) for producto in shopping_cart)
+    for producto in shopping_cart:
+        nombre = shopping_cart[producto]['nombre']
+        precio = float(shopping_cart[producto]['precio'])
+        cantidad = int(shopping_cart[producto]['cantidad'])
+        total_por_producto = round(precio*cantidad,2)
+        espacios = max_nombre - len(nombre)
+        print(f"  - {nombre}{" "*espacios} (x{cantidad}) -> {total_por_producto}")
+
+def finalizar_compra(shopping_cart):
+    print("Resumen de compra: ")
+    max_nombre = max(len(shopping_cart[producto]['nombre']) for producto in shopping_cart)
+    precio_total = 0
+    for producto in shopping_cart:
+        nombre = shopping_cart[producto]['nombre']
+        precio = float(shopping_cart[producto]['precio'])
+        cantidad = int(shopping_cart[producto]['cantidad'])
+        total_por_producto = round(precio*cantidad,2)
+        espacios = max_nombre - len(nombre)
+        print(f" {nombre}{" "*espacios} (x{cantidad}) -> {total_por_producto}")
+        precio_total += total_por_producto
+    
+    print(f"Total a pagar {precio_total}")
+
+
 print(tienda())
